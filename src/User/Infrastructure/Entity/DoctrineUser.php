@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\User\Infrastructure\Entity;
 
 use App\User\Domain\Model\User;
+use App\User\Domain\ValueObject\Email;
+use App\User\Domain\ValueObject\Password;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
@@ -32,15 +34,15 @@ class DoctrineUser
 
     public function toDomain(): User
     {
-        return new User($this->id, $this->email, $this->password, $this->firstName, $this->lastName);
+        return new User($this->id, new Email($this->email), new Password($this->password), $this->firstName, $this->lastName);
     }
 
     public static function fromDomain(User $user): self
     {
         $entity = new self();
         $entity->id = $user->getId();
-        $entity->email = $user->getEmail();
-        $entity->password = $user->getPassword();
+        $entity->email = $user->getEmail()->getEmail();
+        $entity->password = $user->getPassword()->getHashedPassword();
         $entity->firstName = $user->getFirstName();
         $entity->lastName = $user->getLastName();
 
