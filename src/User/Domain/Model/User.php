@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\User\Domain;
+namespace App\User\Domain\Model;
 
+use InvalidArgumentException;
 use Symfony\Component\Uid\Uuid;
 
 class User
@@ -17,7 +18,7 @@ class User
     )
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('Invalid email address.');
+            throw new InvalidArgumentException('Invalid email address.');
         }
 
         $this->password = password_hash($password, PASSWORD_DEFAULT);
@@ -51,5 +52,15 @@ class User
     public function changePassword(string $password): void
     {
         $this->password = password_hash($password, PASSWORD_DEFAULT);
+    }
+
+    public function getId(): Uuid
+    {
+        return $this->uuid;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
     }
 }

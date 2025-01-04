@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y \
 # Instalacja Composera
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-
 # Ustawienie katalogu roboczego
 WORKDIR /var/www/html
 

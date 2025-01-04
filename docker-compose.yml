@@ -42,7 +42,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql
     ports:
-      - "3307:3306"
+      - "3312:3306"
     networks:
       - app-network
 
@@ -59,7 +59,6 @@ services:
       - db
     networks:
       - app-network
-
 
 volumes:
   db-data:
