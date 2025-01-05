@@ -1,0 +1,8 @@
+doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
+        dbname_suffix: '_test'
+        logging: false
+    orm:
+        auto_generate_proxy_classes: true
+        auto_mapping: true
