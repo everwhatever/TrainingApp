@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
-#[Route('/api/v1/user/create', name: 'api_user_create', methods: ['POST'])]
+#[Route('/api/v1/user', name: 'api_user_create', methods: ['POST'])]
 readonly class CreateUserApiController
 {
     public function __construct(private MessageBusInterface $messageBus)

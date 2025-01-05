@@ -9,6 +9,7 @@ use App\User\Domain\Repository\UserRepository;
 use App\User\Infrastructure\Entity\DoctrineUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Uid\Uuid;
 
 class DoctrineUserRepository implements UserRepository
 {
@@ -36,15 +37,27 @@ class DoctrineUserRepository implements UserRepository
         }
     }
 
-    public function findByEmail(string $email): ?User
+    public function findById(Uuid $id): ?User
     {
-        $doctrineUser = $this->repository->findOneBy(['email' => $email]);
+        $doctrineUser = $this->repository->find($id->toRfc4122());
         return $doctrineUser?->toDomain();
     }
 
-    public function findById(int $id): ?User
+    public function findBy(array $params): array
     {
-        $doctrineUser = $this->repository->find($id);
+        $doctrineUsers = $this->repository->findBy($params);
+
+        $users = [];
+        foreach ($doctrineUsers as $doctrineUser) {
+            $users[] = $doctrineUser->toDomain();
+        }
+
+        return $users;
+    }
+
+    public function findOneBy(array $params): ?User
+    {
+        $doctrineUser = $this->repository->findOneBy($params);
         return $doctrineUser?->toDomain();
     }
 }
