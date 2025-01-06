@@ -7,6 +7,7 @@ namespace App\User\Presentation\Controller\Api;
 use App\User\Application\Command\CreateUserCommand;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
@@ -23,15 +24,15 @@ readonly class CreateUserApiController
         $userData = json_decode($request->getContent(), true);
 
         if (empty($userData)) {
-            return new JsonResponse(['status' => 400, 'message' => 'Invalid JSON body'], 400);
+            return new JsonResponse(['status' => Response::HTTP_BAD_REQUEST, 'message' => 'Invalid JSON body'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$userData['email']) {
-            return new JsonResponse(['status' => 400, 'message' => 'Email cannot be empty'], 400);
+            return new JsonResponse(['status' => Response::HTTP_BAD_REQUEST, 'message' => 'Email cannot be empty'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$userData['password']) {
-            return new JsonResponse(['status' => 400, 'message' => 'Password cannot be empty'], 400);
+            return new JsonResponse(['status' => Response::HTTP_BAD_REQUEST, 'message' => 'Password cannot be empty'], Response::HTTP_BAD_REQUEST);
         }
 
         $command = new CreateUserCommand(
@@ -44,9 +45,9 @@ readonly class CreateUserApiController
         try {
             $this->messageBus->dispatch($command);
 
-            return new JsonResponse(['status' => 201, 'message' => 'User created'], 201);
+            return new JsonResponse(['status' => Response::HTTP_CREATED, 'message' => 'User created'], Response::HTTP_CREATED);
         } catch (Throwable $exception) {
-            return new JsonResponse(['status' => 500, 'message' => $exception->getMessage()], 500);
+            return new JsonResponse(['status' => Response::HTTP_INTERNAL_SERVER_ERROR, 'message' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
