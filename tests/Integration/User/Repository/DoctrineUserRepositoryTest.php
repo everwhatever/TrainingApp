@@ -58,4 +58,23 @@ class DoctrineUserRepositoryTest extends KernelTestCase
         $this->assertSame('test@example.com', $foundUser->getEmail()->getEmail());
         $this->assertSame('John', $foundUser->getFirstName());
     }
+
+    public function testDeleteUser(): void
+    {
+        $user = new User(
+            Uuid::v4(),
+            new Email('test@example.com'),
+            new Password('Password111'),
+            'John',
+            'Doe'
+        );
+
+        $this->repository->save($user);
+        $foundUser = $this->repository->findOneBy(['email' => 'test@example.com']);
+        $this->assertNotNull($foundUser);
+
+        $this->repository->delete($foundUser->getId());
+        $foundUser = $this->repository->findOneBy(['email' => 'test@example.com']);
+        $this->assertNull($foundUser);
+    }
 }

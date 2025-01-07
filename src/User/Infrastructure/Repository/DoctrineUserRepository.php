@@ -9,6 +9,7 @@ use App\User\Domain\Repository\UserRepository;
 use App\User\Infrastructure\Entity\DoctrineUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Uid\Uuid;
 
 class DoctrineUserRepository implements UserRepository
@@ -27,14 +28,16 @@ class DoctrineUserRepository implements UserRepository
         $this->entityManager->flush();
     }
 
-    public function delete(int $id): void
+    public function delete(Uuid $id): void
     {
-        $doctrineUser = $this->repository->find($id);
+        $doctrineUser = $this->entityManager->getRepository(DoctrineUser::class)->find($id);
 
-        if ($doctrineUser !== null) {
-            $this->entityManager->remove($doctrineUser);
-            $this->entityManager->flush();
+        if (!$doctrineUser) {
+            throw new NotFoundHttpException('User not found');
         }
+
+        $this->entityManager->remove($doctrineUser);
+        $this->entityManager->flush();
     }
 
     public function findById(Uuid $id): ?User
