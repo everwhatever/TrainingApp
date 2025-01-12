@@ -1,0 +1,32 @@
+security:
+    password_hashers:
+        App\User\Infrastructure\Entity\DoctrineUser: bcrypt # Twoja klasa User w modelu domenowym
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\User\Infrastructure\Entity\DoctrineUser # Encja Doctrine dla użytkownika
+                property: email # Pole, które identyfikuje użytkownika
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        login:
+            pattern: ^/api/login
+            stateless: true
+            json_login:
+                check_path: /api/login
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            provider: app_user_provider # Dodano provider
+
+        api:
+            pattern: ^/api/
+            stateless: true
+            jwt: ~
+            provider: app_user_provider # Dodano provider
+
+    access_control:
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/, roles: IS_AUTHENTICATED_FULLY }

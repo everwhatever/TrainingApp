@@ -12,7 +12,6 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Uid\Uuid;
 
 #[Route('api/v1/user', name: 'api_get_one_user', methods: ['GET'])]
 readonly class GetOneUserApiController

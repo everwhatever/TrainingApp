@@ -20,7 +20,7 @@ class CreateUserApiControllerTest extends WebTestCase
 
         $this->client = self::createClient();
         $this->entityManager = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $this->entityManager->beginTransaction();
+//        $this->entityManager->beginTransaction();
     }
 
     protected function tearDown(): void

@@ -23,10 +23,19 @@ class DoctrineUserRepository implements UserRepository
 
     public function save(User $user): void
     {
-        $doctrineUser = DoctrineUser::fromDomain($user);
+        $doctrineUser = $this->repository->find($user->getId());
+
+        if (!$doctrineUser) {
+            $doctrineUser = DoctrineUser::fromDomain($user);
+        } else {
+            $doctrineUser->setFirstName($user->getFirstName());
+            $doctrineUser->setLastName($user->getLastName());
+        }
+
         $this->entityManager->persist($doctrineUser);
         $this->entityManager->flush();
     }
+
 
     public function delete(Uuid $id): void
     {

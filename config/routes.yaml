@@ -2,6 +2,9 @@ user_controllers:
     resource: ../src/User/Presentation/Controller/
     type: attribute
 
+api_login_check:
+    path: /api/login
+
 #analytics_controllers:
 #    resource: ../src/analytics/Presentation/Controller/
 #    namespace: App\Analytics\Presentation\Controller

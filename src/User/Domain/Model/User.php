@@ -13,12 +13,17 @@ class User
 {
     public function __construct(
         private readonly Uuid   $uuid,
-        private readonly Email  $email,
+        private Email  $email,
         private Password        $password,
-        private readonly string $firstName,
-        private readonly string $lastName
+        private string $firstName,
+        private string $lastName
     )
     {
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_USER']; // Możesz dostosować role w zależności od wymagań
     }
 
     public function getUuid(): Uuid
@@ -59,5 +64,20 @@ class User
     public function changePassword(Password $password): void
     {
         $this->password = $password;
+    }
+
+    public function setEmail(Email $email): void
+    {
+        $this->email = $email;
+    }
+
+    public function setFirstName(string $firstName): void
+    {
+        $this->firstName = $firstName;
+    }
+
+    public function setLastName(string $lastName): void
+    {
+        $this->lastName = $lastName;
     }
 }
