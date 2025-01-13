@@ -19,6 +19,13 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    App\User\Presentation\Controller\Api\:
+        resource: '../src/User/Presentation/Controller/Api/*'
+        tags: [ 'controller.service_arguments' ]
+
+    test.App\User\Infrastructure\Repository\DoctrineUserRepository:
+        alias: App\User\Infrastructure\Repository\DoctrineUserRepository
+        public: true
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

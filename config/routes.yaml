@@ -1,5 +1,31 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+user_controllers:
+    resource: ../src/User/Presentation/Controller/
     type: attribute
+
+api_login_check:
+    path: /api/login
+
+#analytics_controllers:
+#    resource: ../src/analytics/Presentation/Controller/
+#    namespace: App\Analytics\Presentation\Controller
+#    type: attribute
+#
+#measurements_controllers:
+#    resource: ../src/measurements/Presentation/Controller/
+#    namespace: App\Measurements\Presentation\Controller
+#    type: attribute
+#
+#training_controllers:
+#    resource: ../src/training/Presentation/Controller/
+#    namespace: App\Training\Presentation\Controller
+#    type: attribute
+#
+#training_plan_controllers:
+#    resource: ../src/trainingPlan/Presentation/Controller/
+#    namespace: App\TrainingPlan\Presentation\Controller
+#    type: attribute
+#
+#shared_controllers:
+#    resource: ../src/shared/Presentation/Controller/
+#    namespace: App\Shared\Presentation\Controller
+#    type: attribute
