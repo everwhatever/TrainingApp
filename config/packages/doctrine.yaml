@@ -19,4 +19,15 @@ doctrine:
                 dir: '%kernel.project_dir%/src/User/Infrastructure/Entity'
                 prefix: 'App\User\Infrastructure\Entity'
                 alias: User
-
+            Measurement:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Measurement/Infrastructure/Entity'
+                prefix: 'App\Measurement\Infrastructure\Entity'
+                alias: Measurement
+            MeasurementHistory:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Measurement/Infrastructure/Entity'
+                prefix: 'App\Measurement\Infrastructure\Entity'
+                alias: MeasurementHistory
