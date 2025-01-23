@@ -29,8 +29,7 @@ readonly class DeleteUserApiController
         }
 
         try {
-            $uuid = Uuid::fromString($userId);
-            $message = new DeleteUserCommand($uuid);
+            $message = new DeleteUserCommand($userId);
             $this->messageBus->dispatch($message);
 
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);

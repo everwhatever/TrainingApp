@@ -8,7 +8,7 @@ use Symfony\Component\Uid\Uuid;
 
 readonly class DeleteUserCommand
 {
-    public function __construct(public Uuid $userId)
+    public function __construct(public string $userId)
     {
     }
 }

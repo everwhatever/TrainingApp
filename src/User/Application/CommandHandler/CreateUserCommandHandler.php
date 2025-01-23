@@ -24,6 +24,12 @@ readonly class CreateUserCommandHandler
         $password = Password::fromString($command->plainPassword);
         $email = new Email($command->email);
 
+        $user = $this->userRepository->findOneBy(['email' => $email->getEmail()]);
+
+        if ($user) {
+            throw new \InvalidArgumentException('User already exists.');
+        }
+
         $user = new User(
             Uuid::v4(),
             $email,

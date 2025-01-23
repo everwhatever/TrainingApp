@@ -15,5 +15,5 @@ interface UserRepository
 
     public function findOneBy(array $params): ?User;
 
-    public function findById(Uuid $id): ?User;
+    public function delete(Uuid $userId): void;
 }

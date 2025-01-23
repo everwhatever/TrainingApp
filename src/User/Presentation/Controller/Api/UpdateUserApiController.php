@@ -27,7 +27,7 @@ readonly class UpdateUserApiController
             return new JsonResponse(['status' => Response::HTTP_BAD_REQUEST, 'message' => 'Invalid JSON body'], Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$userData['id']) {
+        if (empty($userData['id'])) {
             return new JsonResponse(['status' => Response::HTTP_BAD_REQUEST, 'message' => 'Id cannot be empty'], Response::HTTP_BAD_REQUEST);
         }
 
