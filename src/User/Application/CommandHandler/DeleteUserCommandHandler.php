@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\User\Application\CommandHandler;
 
 use App\User\Application\Command\DeleteUserCommand;
+use App\User\Domain\Event\UserDeletedEvent;
 use App\User\Domain\Repository\UserRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Uid\Uuid;
@@ -13,7 +15,7 @@ use Symfony\Component\Uid\Uuid;
 #[AsMessageHandler]
 readonly class DeleteUserCommandHandler
 {
-    public function __construct(private UserRepository $userRepository)
+    public function __construct(private UserRepository $userRepository, private EventDispatcherInterface $dispatcher)
     {
     }
 
@@ -27,6 +29,14 @@ readonly class DeleteUserCommandHandler
         }
 
         $userId = Uuid::fromString($userId);
-        $this->userRepository->delete($userId);
+
+        try {
+            $this->userRepository->delete($userId);
+        } catch (\Exception $exception) {
+            throw new \RuntimeException('Failed to delete user: ' . $exception->getMessage());
+        }
+
+        $userDeletedEvent = new UserDeletedEvent($userId, new \DateTimeImmutable());
+        $this->dispatcher->dispatch($userDeletedEvent);
     }
 }
