@@ -23,7 +23,7 @@ class User
 
     public function getRoles(): array
     {
-        return ['ROLE_USER']; // Możesz dostosować role w zależności od wymagań
+        return ['ROLE_USER'];
     }
 
     public function getUuid(): Uuid

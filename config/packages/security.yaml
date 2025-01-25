@@ -1,12 +1,10 @@
 security:
     password_hashers:
-        App\User\Infrastructure\Entity\DoctrineUser: bcrypt # Twoja klasa User w modelu domenowym
+        App\User\Infrastructure\Security\SecurityUser: bcrypt
 
     providers:
         app_user_provider:
-            entity:
-                class: App\User\Infrastructure\Entity\DoctrineUser # Encja Doctrine dla użytkownika
-                property: email # Pole, które identyfikuje użytkownika
+            id: App\User\Infrastructure\Security\UserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

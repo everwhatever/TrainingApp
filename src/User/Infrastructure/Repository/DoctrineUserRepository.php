@@ -6,70 +6,87 @@ namespace App\User\Infrastructure\Repository;
 
 use App\User\Domain\Model\User;
 use App\User\Domain\Repository\UserRepository;
-use App\User\Infrastructure\Entity\DoctrineUser;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use App\User\Domain\ValueObject\Email;
+use App\User\Domain\ValueObject\Password;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Uid\Uuid;
 
 class DoctrineUserRepository implements UserRepository
 {
-    private EntityRepository $repository;
+    private Connection $connection;
 
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(Connection $connection)
     {
-        $this->repository = $entityManager->getRepository(DoctrineUser::class);
+        $this->connection = $connection;
     }
 
+    /**
+     * @throws Exception
+     */
     public function save(User $user): void
     {
-        $doctrineUser = $this->repository->find($user->getId());
+        $query = 'INSERT INTO users (id, first_name, last_name, email, password) 
+                  VALUES (:id, :first_name, :last_name, :email, :password)
+                  ON DUPLICATE KEY UPDATE 
+                  first_name = :first_name, last_name = :last_name, email = :email, password = :password';
 
-        if (!$doctrineUser) {
-            $doctrineUser = DoctrineUser::fromDomain($user);
-        } else {
-            $doctrineUser->setFirstName($user->getFirstName());
-            $doctrineUser->setLastName($user->getLastName());
-        }
-
-        $this->entityManager->persist($doctrineUser);
-        $this->entityManager->flush();
+        $this->connection->executeStatement($query, [
+            'id' => $user->getId()->toBinary(),
+            'first_name' => $user->getFirstName(),
+            'last_name' => $user->getLastName(),
+            'email' => $user->getEmail()->getEmail(),
+            'password' => $user->getPassword()->getHashedPassword(),
+        ]);
     }
 
-
-    public function delete(Uuid $id): void
+    public function delete(Uuid $userId): void
     {
-        $doctrineUser = $this->entityManager->getRepository(DoctrineUser::class)->find($id);
+        $query = 'DELETE FROM users WHERE id = :id';
 
-        if (!$doctrineUser) {
+        $rowsAffected = $this->connection->executeStatement($query, [
+            'id' => $userId->toBinary(),
+        ]);
+
+        if ($rowsAffected === 0) {
             throw new NotFoundHttpException('User not found');
         }
-
-        $this->entityManager->remove($doctrineUser);
-        $this->entityManager->flush();
-    }
-
-    public function findById(Uuid $id): ?User
-    {
-        $doctrineUser = $this->repository->find($id->toRfc4122());
-        return $doctrineUser?->toDomain();
     }
 
     public function findBy(array $params): array
     {
-        $doctrineUsers = $this->repository->findBy($params);
+        $query = 'SELECT * FROM users WHERE ' . $this->buildWhereClause($params);
+        $result = $this->connection->fetchAllAssociative($query, $params);
 
-        $users = [];
-        foreach ($doctrineUsers as $doctrineUser) {
-            $users[] = $doctrineUser->toDomain();
-        }
-
-        return $users;
+        return array_map(fn(array $row) => $this->hydrateUser($row), $result);
     }
 
     public function findOneBy(array $params): ?User
     {
-        $doctrineUser = $this->repository->findOneBy($params);
-        return $doctrineUser?->toDomain();
+        if (isset($params['id'])) {
+            $params['id'] = Uuid::fromString($params['id'])->toBinary();
+        }
+
+        $query = 'SELECT * FROM users WHERE ' . $this->buildWhereClause($params) . ' LIMIT 1';
+        $result = $this->connection->fetchAssociative($query, $params);
+
+        return $result ? $this->hydrateUser($result) : null;
+    }
+
+    private function buildWhereClause(array $params): string
+    {
+        return implode(' AND ', array_map(fn(string $key) => "$key = :$key", array_keys($params)));
+    }
+
+    private function hydrateUser(array $data): User
+    {
+        return new User(
+            Uuid::fromBinary($data['id']),
+            new Email($data['email']),
+            new Password($data['password']),
+            $data['first_name'],
+            $data['last_name']
+        );
     }
 }
