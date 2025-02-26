@@ -18,7 +18,7 @@ readonly class DoctrineWorkoutRepository implements WorkoutRepository
     {
         $data = [
             'id' => $workout->getId(),
-            'user_id' => $workout->getUserId()->toBinary(),
+            'user_id' => $workout->getUserId()->toString(),
             'started_at' => $workout->getStartedAt()->format('Y-m-d H:i:s'),
             'completed_at' => $workout->getCompletedAt()?->format('Y-m-d H:i:s'),
         ];
@@ -58,7 +58,7 @@ readonly class DoctrineWorkoutRepository implements WorkoutRepository
             ->select('*')
             ->from('workouts')
             ->where('user_id = :user_id')
-            ->setParameter('user_id', Uuid::fromString($userId)->toBinary())
+            ->setParameter('user_id', Uuid::fromString($userId)->toString())
             ->executeQuery();
 
         $results = $stmt->fetchAllAssociative();
@@ -70,7 +70,7 @@ readonly class DoctrineWorkoutRepository implements WorkoutRepository
     {
         return Workout::create(
             $data['id'],
-            Uuid::fromBinary($data['user_id']),
+            Uuid::fromString($data['user_id']),
             new DateTimeImmutable($data['started_at'])
         );
     }

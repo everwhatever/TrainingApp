@@ -33,7 +33,7 @@ class DoctrineUserRepository implements UserRepository
                   first_name = :first_name, last_name = :last_name, email = :email, password = :password';
 
         $this->connection->executeStatement($query, [
-            'id' => $user->getId()->toBinary(),
+            'id' => $user->getId()->toString(),
             'first_name' => $user->getFirstName(),
             'last_name' => $user->getLastName(),
             'email' => $user->getEmail()->getEmail(),
@@ -46,7 +46,7 @@ class DoctrineUserRepository implements UserRepository
         $query = 'DELETE FROM users WHERE id = :id';
 
         $rowsAffected = $this->connection->executeStatement($query, [
-            'id' => $userId->toBinary(),
+            'id' => $userId,
         ]);
 
         if ($rowsAffected === 0) {
@@ -65,7 +65,7 @@ class DoctrineUserRepository implements UserRepository
     public function findOneBy(array $params): ?User
     {
         if (isset($params['id'])) {
-            $params['id'] = Uuid::fromString($params['id'])->toBinary();
+            $params['id'] = Uuid::fromString($params['id']);
         }
 
         $query = 'SELECT * FROM users WHERE ' . $this->buildWhereClause($params) . ' LIMIT 1';
@@ -82,7 +82,7 @@ class DoctrineUserRepository implements UserRepository
     private function hydrateUser(array $data): User
     {
         return new User(
-            Uuid::fromBinary($data['id']),
+            Uuid::fromString($data['id']),
             new Email($data['email']),
             new Password($data['password']),
             $data['first_name'],

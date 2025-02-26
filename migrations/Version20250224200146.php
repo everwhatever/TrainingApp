@@ -21,7 +21,7 @@ final class Version20250224200146 extends AbstractMigration
     {
         $this->addSql('
             CREATE TABLE IF NOT EXISTS users (
-                id BINARY(16) PRIMARY KEY,
+                id VARCHAR(255) PRIMARY KEY,
                 email VARCHAR(255) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
                 first_name VARCHAR(255) NOT NULL,
@@ -34,7 +34,7 @@ final class Version20250224200146 extends AbstractMigration
         $this->addSql('
             CREATE TABLE IF NOT EXISTS workouts (
                 id VARCHAR(255) PRIMARY KEY,
-                user_id BINARY(16) NOT NULL,
+                user_id VARCHAR(255) NOT NULL,
                 started_at DATETIME NOT NULL,
                 completed_at DATETIME DEFAULT NULL,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
