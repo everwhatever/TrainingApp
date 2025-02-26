@@ -8,6 +8,7 @@ use App\Training\Domain\Model\Aggregate\Workout;
 use App\Training\Domain\Repository\WorkoutRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\Uid\Uuid;
 
 readonly class DoctrineWorkoutRepository implements WorkoutRepository
 {
@@ -17,7 +18,7 @@ readonly class DoctrineWorkoutRepository implements WorkoutRepository
     {
         $data = [
             'id' => $workout->getId(),
-            'user_id' => $workout->getUserId(),
+            'user_id' => $workout->getUserId()->toBinary(),
             'started_at' => $workout->getStartedAt()->format('Y-m-d H:i:s'),
             'completed_at' => $workout->getCompletedAt()?->format('Y-m-d H:i:s'),
         ];
@@ -57,7 +58,7 @@ readonly class DoctrineWorkoutRepository implements WorkoutRepository
             ->select('*')
             ->from('workouts')
             ->where('user_id = :user_id')
-            ->setParameter('user_id', $userId)
+            ->setParameter('user_id', Uuid::fromString($userId)->toBinary())
             ->executeQuery();
 
         $results = $stmt->fetchAllAssociative();
@@ -69,7 +70,7 @@ readonly class DoctrineWorkoutRepository implements WorkoutRepository
     {
         return Workout::create(
             $data['id'],
-            $data['user_id'],
+            Uuid::fromBinary($data['user_id']),
             new DateTimeImmutable($data['started_at'])
         );
     }

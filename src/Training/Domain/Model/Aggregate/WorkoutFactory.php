@@ -6,6 +6,7 @@ namespace App\Training\Domain\Model\Aggregate;
 
 use App\Training\Domain\Service\IdGenerator;
 use DateTimeImmutable;
+use Symfony\Component\Uid\Uuid;
 
 class WorkoutFactory
 {
@@ -16,7 +17,7 @@ class WorkoutFactory
         $this->idGenerator = $idGenerator;
     }
 
-    public function create(string $userId): Workout
+    public function create(Uuid $userId): Workout
     {
         $id = $this->idGenerator->generateWorkoutId();
         $startedAt = new DateTimeImmutable();

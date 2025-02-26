@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Training\Presentation\Controller\Api\Workout;
 
+use App\Training\Application\Command\CreateWorkoutCommand;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

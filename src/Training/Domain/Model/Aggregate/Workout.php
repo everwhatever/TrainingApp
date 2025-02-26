@@ -4,25 +4,26 @@ namespace App\Training\Domain\Model\Aggregate;
 
 use App\Training\Domain\Model\Entity\Series;
 use DateTimeImmutable;
+use Symfony\Component\Uid\Uuid;
 
 class Workout
 {
     private string $id;
-    private string $userId;
+    private Uuid $userId;
     private DateTimeImmutable $startedAt;
     private ?DateTimeImmutable $completedAt = null;
 
     /** @var Series[] */
     private array $series = [];
 
-    private function __construct(string $id, string $userId, DateTimeImmutable $startedAt)
+    private function __construct(string $id, Uuid $userId, DateTimeImmutable $startedAt)
     {
         $this->id = $id;
         $this->userId = $userId;
         $this->startedAt = $startedAt;
     }
 
-    public static function create(string $id, string $userId, DateTimeImmutable $startedAt): self
+    public static function create(string $id, Uuid $userId, DateTimeImmutable $startedAt): self
     {
         return new self($id, $userId, $startedAt);
     }
@@ -47,7 +48,7 @@ class Workout
         return $this->id;
     }
 
-    public function getUserId(): string
+    public function getUserId(): Uuid
     {
         return $this->userId;
     }

@@ -33,7 +33,7 @@ final class Version20250224200146 extends AbstractMigration
         // Tabela workouts
         $this->addSql('
             CREATE TABLE IF NOT EXISTS workouts (
-                id BINARY(16) PRIMARY KEY,
+                id VARCHAR(255) PRIMARY KEY,
                 user_id BINARY(16) NOT NULL,
                 started_at DATETIME NOT NULL,
                 completed_at DATETIME DEFAULT NULL,
