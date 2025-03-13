@@ -1,8 +1,5 @@
 framework:
     messenger:
-        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
-        # failure_transport: failed
-
         transports:
             async:
                 dsn: '%env(RABBITMQ_DSN)%'
@@ -12,14 +9,5 @@ framework:
                         type: direct
                     queues:
                         messages: ~
-
         routing:
             'App\Training\Domain\Event\Workout\WorkoutCreatedEvent': async
-
-# when@test:
-#    framework:
-#    messenger:
-#        transports:
-#            async: 'in-memory://'
-#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
-#                async: 'in-memory://'
