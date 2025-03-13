@@ -94,4 +94,40 @@ class DoctrineWorkoutRepositoryTest extends KernelTestCase
         $this->assertSame($this->userId, $retrievedWorkouts[0]->getUserId()->toRfc4122());
         $this->assertSame($this->userId, $retrievedWorkouts[1]->getUserId()->toRfc4122());
     }
+
+    public function testShouldFindAllWorkoutsWithinDateRange(): void
+    {
+        $workout1 = Workout::create(Uuid::v4()->toRfc4122(), Uuid::fromString($this->userId), new DateTimeImmutable('-4 days'));
+        $workout2 = Workout::create(Uuid::v4()->toRfc4122(), Uuid::fromString($this->userId), new DateTimeImmutable('-3 days'));
+        $workout3 = Workout::create(Uuid::v4()->toRfc4122(), Uuid::fromString($this->userId), new DateTimeImmutable('-2 days'));
+        $workout4 = Workout::create(Uuid::v4()->toRfc4122(), Uuid::fromString($this->userId), new DateTimeImmutable('-1 day'));
+
+        $this->repository->save($workout1);
+        $this->repository->save($workout2);
+        $this->repository->save($workout3);
+        $this->repository->save($workout4);
+
+        // zakres od 3 dni temu do 1 dnia temu (powinien zwrócić 3 treningi)
+        $startDate = new DateTimeImmutable('-3 days');
+        $endDate = new DateTimeImmutable('-1 day');
+
+        $retrievedWorkouts = $this->repository->findAllWithinDateRange($this->userId, $startDate, $endDate);
+
+        $this->assertCount(3, $retrievedWorkouts);
+
+        $retrievedWorkoutIds = array_map(fn(Workout $w) => $w->getId(), $retrievedWorkouts);
+
+        $this->assertContains($workout2->getId(), $retrievedWorkoutIds);
+        $this->assertContains($workout3->getId(), $retrievedWorkoutIds);
+        $this->assertContains($workout4->getId(), $retrievedWorkoutIds);
+
+        // zakres tylko z datą rozpoczęcia (powinien zwrócić wszystkie 4 treningi)
+        $retrievedAllWorkouts = $this->repository->findAllWithinDateRange($this->userId, new DateTimeImmutable('-5 days'));
+        $this->assertCount(4, $retrievedAllWorkouts);
+
+        // zakres dat bez wyników
+        $emptyResults = $this->repository->findAllWithinDateRange($this->userId, new DateTimeImmutable('-10 days'), new DateTimeImmutable('-9 days'));
+        $this->assertCount(0, $emptyResults);
+    }
+
 }

@@ -60,6 +60,18 @@ services:
     networks:
       - app-network
 
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq-container
+    ports:
+      - "5672:5672" # AMQP Port
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - app-network
+
 volumes:
   db-data:
 

@@ -10,6 +10,10 @@ interface WorkoutRepository
 {
     public function save(Workout $workout): void;
     public function findOneById(string $id): ?Workout;
-
     public function findAllByUserId(string $userId): array;
+    public function findAllWithinDateRange(
+        string $userId,
+        \DateTimeImmutable $startedAt,
+        ?\DateTimeImmutable $completedAt = null
+    ): array;
 }

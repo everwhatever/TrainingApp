@@ -54,14 +54,36 @@ readonly class DoctrineWorkoutRepository implements WorkoutRepository
 
     public function findAllByUserId(string $userId): array
     {
-        $stmt = $this->connection->createQueryBuilder()
+        $qb = $this->connection->createQueryBuilder()
             ->select('*')
             ->from('workouts')
             ->where('user_id = :user_id')
-            ->setParameter('user_id', Uuid::fromString($userId)->toString())
-            ->executeQuery();
+            ->setParameter('user_id', Uuid::fromString($userId)->toString());
 
-        $results = $stmt->fetchAllAssociative();
+        $results = $qb->executeQuery()->fetchAllAssociative();
+
+        return array_map(fn(array $row) => $this->hydrateWorkout($row), $results);
+    }
+
+    public function findAllWithinDateRange(
+        string $userId,
+        \DateTimeImmutable $startedAt,
+        ?\DateTimeImmutable $completedAt = null
+    ): array {
+        $qb = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from('workouts')
+            ->where('user_id = :user_id')
+            ->andWhere('started_at >= :started_at')
+            ->setParameter('user_id', Uuid::fromString($userId)->toString())
+            ->setParameter('started_at', $startedAt->format('Y-m-d H:i:s'));
+
+        if ($completedAt !== null) {
+            $qb->andWhere('started_at <= :completed_at')
+                ->setParameter('completed_at', $completedAt->format('Y-m-d H:i:s'));
+        }
+
+        $results = $qb->executeQuery()->fetchAllAssociative();
 
         return array_map(fn(array $row) => $this->hydrateWorkout($row), $results);
     }
