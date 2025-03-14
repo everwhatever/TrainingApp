@@ -11,3 +11,4 @@ framework:
                         messages: ~
         routing:
             'App\Training\Domain\Event\Workout\WorkoutCreatedEvent': async
+            'App\Training\Domain\Event\Workout\WorkoutDeletedEvent': async

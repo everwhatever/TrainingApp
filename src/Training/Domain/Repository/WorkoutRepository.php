@@ -16,4 +16,6 @@ interface WorkoutRepository
         \DateTimeImmutable $startedAt,
         ?\DateTimeImmutable $completedAt = null
     ): array;
+
+    public function delete(string $workoutId): void;
 }

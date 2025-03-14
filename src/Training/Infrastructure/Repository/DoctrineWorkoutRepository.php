@@ -88,6 +88,15 @@ readonly class DoctrineWorkoutRepository implements WorkoutRepository
         return array_map(fn(array $row) => $this->hydrateWorkout($row), $results);
     }
 
+    public function delete(string $workoutId): void
+    {
+        $this->connection->createQueryBuilder()
+            ->delete('workouts')
+            ->where('id = :id')
+            ->setParameter('id', $workoutId)
+            ->executeQuery();
+    }
+
     private function hydrateWorkout(array $data): Workout
     {
         return Workout::create(
