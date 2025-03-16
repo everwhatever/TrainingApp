@@ -24,7 +24,7 @@ readonly class GetOneUserQueryHandler
         }
 
         return[
-            'id' => $user->getId()->toRfc4122(),
+            'id' => $user->getId()->toString(),
             'email' => $user->getEmail()->getEmail(),
             'firstName' => $user->getFirstName(),
             'lastName' => $user->getLastName(),

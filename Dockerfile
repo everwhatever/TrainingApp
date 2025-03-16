@@ -1,15 +1,19 @@
 # Użycie obrazu PHP z PHP-FPM
 FROM php:8.2-fpm
 
-# Instalacja wymaganych rozszerzeń PHP
+# Instalacja wymaganych pakietów systemowych
 RUN apt-get update && apt-get install -y \
     libonig-dev \
-    libzip-dev \
-    zip \
+    librabbitmq-dev \
+    libssh-dev \
     unzip \
-    git \
-    curl \
-    && docker-php-ext-install pdo pdo_mysql zip mbstring
+    zip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instalacja rozszerzeń PHP (w tym AMQP)
+RUN docker-php-ext-install pdo pdo_mysql mbstring \
+    && pecl install amqp \
+    && docker-php-ext-enable amqp
 
 # Instalacja Composera
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -20,11 +24,8 @@ WORKDIR /var/www/html
 # Skopiowanie plików aplikacji Symfony do kontenera
 COPY . /var/www/html
 
-# Instalacja zależności za pomocą Composera
-RUN composer install
+# Instalacja zależności Composera
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Ustawienie uprawnień dla Symfony (cache i logi)
-RUN chown -R www-data:www-data /var/www/html/var /var/www/html/public
-
-# Otworzenie portu dla PHP-FPM
+# Ustawienie portu dla PHP-FPM
 EXPOSE 9000

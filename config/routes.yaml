@@ -15,10 +15,9 @@ api_login_check:
 #    namespace: App\Measurements\Presentation\Controller
 #    type: attribute
 #
-#training_controllers:
-#    resource: ../src/training/Presentation/Controller/
-#    namespace: App\Training\Presentation\Controller
-#    type: attribute
+training_controllers:
+    resource: ../src/Training/Presentation/Controller/
+    type: attribute
 #
 #training_plan_controllers:
 #    resource: ../src/trainingPlan/Presentation/Controller/

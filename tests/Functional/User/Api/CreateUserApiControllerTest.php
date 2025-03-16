@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CreateUserApiControllerTest extends WebTestCase
 {
-    private ?EntityManagerInterface $entityManager;
-    private KernelBrowser $client;
+    private ?EntityManagerInterface $entityManager = null;
+    private ?KernelBrowser $client = null;
 
     protected function setUp(): void
     {
@@ -20,13 +20,17 @@ class CreateUserApiControllerTest extends WebTestCase
 
         $this->client = self::createClient();
         $this->entityManager = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-//        $this->entityManager->beginTransaction();
+
+        // Wyczyść tabelę users dla MySQL
+        $connection = $this->entityManager->getConnection();
+        $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
+        $connection->executeStatement('TRUNCATE TABLE users');
+        $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
     }
 
     protected function tearDown(): void
     {
         if ($this->entityManager) {
-            $this->entityManager->rollback();
             $this->entityManager->close();
             $this->entityManager = null;
         }
@@ -54,9 +58,11 @@ class CreateUserApiControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertSame(['status' => 201, 'message' => 'User created'], $responseData);
     }
+
     public function testCreateUserWithInvalidEmail(): void
     {
         $payload = [
@@ -76,8 +82,7 @@ class CreateUserApiControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        $this->assertSame(500, $response->getStatusCode());
-        $this->assertJson($response->getContent());
+        $this->assertSame(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
 
         $responseData = json_decode($response->getContent(), true);
         $this->assertSame(['status' => 500, 'message' => 'Handling "App\User\Application\Command\CreateUserCommand" failed: Invalid email'], $responseData);
@@ -96,7 +101,6 @@ class CreateUserApiControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $this->assertJson($response->getContent());
 
         $responseData = json_decode($response->getContent(), true);
         $this->assertSame(['status' => 400, 'message' => 'Invalid JSON body'], $responseData);

@@ -38,7 +38,7 @@ class GetOneUserApiControllerTest extends WebTestCase
     public function testGetUserByEmailSuccessfully(): void
     {
         $email = 'test@example.com';
-        $this->mockUserInDatabase((int)Uuid::v4()->toBinary(), $email, 'John', 'Doe', 'Password123');
+        $this->mockUserInDatabase((string)Uuid::v4()->toString(), $email, 'John', 'Doe', 'Password123');
 
         $this->client->request('GET', '/api/v1/user', ['email' => $email]);
 
@@ -77,7 +77,7 @@ class GetOneUserApiControllerTest extends WebTestCase
         $this->assertSame('Invalid JSON body', $responseData['message']);
     }
 
-    private function mockUserInDatabase(int $id, string $email, string $firstName, string $lastName, string $password): void
+    private function mockUserInDatabase(string $id, string $email, string $firstName, string $lastName, string $password): void
     {
         $entityManager = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
