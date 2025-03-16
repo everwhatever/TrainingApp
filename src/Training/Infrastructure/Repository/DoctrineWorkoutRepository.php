@@ -16,23 +16,45 @@ readonly class DoctrineWorkoutRepository implements WorkoutRepository
 
     public function save(Workout $workout): void
     {
-        $data = [
-            'id' => $workout->getId(),
-            'user_id' => $workout->getUserId()->toString(),
-            'started_at' => $workout->getStartedAt()->format('Y-m-d H:i:s'),
-            'completed_at' => $workout->getCompletedAt()?->format('Y-m-d H:i:s'),
-        ];
+        $this->connection->transactional(function () use ($workout) {
+            $workoutData = [
+                'id' => $workout->getId(),
+                'user_id' => $workout->getUserId()->toString(),
+                'started_at' => $workout->getStartedAt()->format('Y-m-d H:i:s'),
+                'completed_at' => $workout->getCompletedAt()?->format('Y-m-d H:i:s'),
+            ];
 
-        $this->connection->transactional(function () use ($data) {
+            // Zapis Workout
             $this->connection->executeStatement(
                 'INSERT INTO workouts (id, user_id, started_at, completed_at) 
-                 VALUES (:id, :user_id, :started_at, :completed_at)
-                 ON DUPLICATE KEY UPDATE 
-                    completed_at = VALUES(completed_at)',
-                $data
+             VALUES (:id, :user_id, :started_at, :completed_at)
+             ON DUPLICATE KEY UPDATE 
+                completed_at = VALUES(completed_at)',
+                $workoutData
             );
+
+            $seriesList = $workout->getSeries();
+
+            if (!empty($seriesList)) {
+                foreach ($seriesList as $series) {
+                    $seriesData = [
+                        'id' => $series->getId(),
+                        'workout_id' => $workout->getId(),
+                        'exercise_name' => $series->getExerciseName()->getExerciseName(),
+                    ];
+
+                    $this->connection->executeStatement(
+                        'INSERT INTO series (id, workout_id, exercise_name) 
+                         VALUES (:id, :workout_id, :exercise_name)
+                         ON DUPLICATE KEY UPDATE
+                            exercise_name = VALUES(exercise_name)',
+                        $seriesData
+                    );
+                }
+            }
         });
     }
+
 
     public function findOneById(string $id): ?Workout
     {

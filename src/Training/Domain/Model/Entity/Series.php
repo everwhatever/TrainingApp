@@ -12,7 +12,7 @@ class Series
     private string $workoutId;
     private ExerciseName $exerciseName;
 
-    /** @var SeriesSet[] */
+    /** @var Set[] */
     private array $seriesSets = [];
 
     private function __construct(string $id, string $workoutId, ExerciseName $exerciseName)
@@ -27,7 +27,7 @@ class Series
         return new self($id, $workoutId, $exerciseName);
     }
 
-    public function addSeriesSet(SeriesSet $seriesSet): void
+    public function addSeriesSet(Set $seriesSet): void
     {
         $this->seriesSets[] = $seriesSet;
     }
