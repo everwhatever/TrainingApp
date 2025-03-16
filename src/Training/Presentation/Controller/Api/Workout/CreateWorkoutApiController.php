@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/v1/training/workout', name: 'api_training_workout_create', methods: ['POST'])]
-class CreateWorkoutApiController
+readonly class CreateWorkoutApiController
 {
     public function __construct(private MessageBusInterface $messageBus)
     {

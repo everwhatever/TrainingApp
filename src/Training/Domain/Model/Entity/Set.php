@@ -6,7 +6,7 @@ namespace App\Training\Domain\Model\Entity;
 
 use DateTimeImmutable;
 
-class SeriesSet
+class Set
 {
     private string $id;
     private string $seriesId;
