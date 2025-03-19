@@ -35,5 +35,13 @@ services:
         alias: App\Training\Infrastructure\Repository\DoctrineWorkoutRepository
         public: true
 
+    App\Exercise\Presentation\Controller\Api\:
+        resource: '../src/Exercise/Presentation/Controller/Api/*'
+        tags: [ 'controller.service_arguments' ]
+
+    test.App\Exercise\Infrastructure\Repository\DoctrineWorkoutRepository:
+        alias: App\Exercise\Infrastructure\Repository\DoctrineWorkoutRepository
+        public: true
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
