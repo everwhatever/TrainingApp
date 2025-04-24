@@ -8,7 +8,6 @@ use App\Exercise\Domain\ValueObject\ExerciseDescription;
 use App\Exercise\Domain\ValueObject\ExerciseImageUrl;
 use App\Exercise\Domain\ValueObject\ExerciseName;
 use App\Exercise\Domain\ValueObject\ExerciseVideoUrl;
-use Symfony\Component\Uid\Uuid;
 
 class Exercise
 {
@@ -38,11 +37,10 @@ class Exercise
         ExerciseDescription $description,
         ExerciseVideoUrl $videoUrl,
         ExerciseImageUrl $imageUrl
-    ): self {
+    ): self
+    {
         return new self($id, $name, $description, $videoUrl, $imageUrl);
     }
-
-    //gettery zwracają stringi lub VO
 
     public function getId(): string
     {

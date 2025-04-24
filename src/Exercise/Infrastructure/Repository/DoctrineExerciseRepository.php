@@ -6,7 +6,9 @@ namespace App\Exercise\Infrastructure\Repository;
 
 use App\Exercise\Domain\Model\Exercise;
 use App\Exercise\Domain\Repository\ExerciseRepository;
+use App\User\Domain\Model\User;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\Uid\Uuid;
 
 readonly class DoctrineExerciseRepository implements ExerciseRepository
 {
@@ -26,14 +28,21 @@ readonly class DoctrineExerciseRepository implements ExerciseRepository
         );
     }
 
-    public function findById(string $id): ?Exercise
+    public function findOneBy(array $params): ?Exercise
     {
-        $result = $this->connection->fetchAssociative(
-            'SELECT * FROM exercises WHERE id = ?',
-            [$id]
-        );
+        if (isset($params['id'])) {
+            $params['id'] = Uuid::fromString($params['id']);
+        }
+
+        $query = 'SELECT * FROM exercises WHERE ' . $this->buildWhereClause($params) . ' LIMIT 1';
+        $result = $this->connection->fetchAssociative($query, $params);
 
         return $result ? $this->hydrateExercise($result) : null;
+    }
+
+    private function buildWhereClause(array $params): string
+    {
+        return implode(' AND ', array_map(fn(string $key) => "$key = :$key", array_keys($params)));
     }
 
     public function findAll(): array

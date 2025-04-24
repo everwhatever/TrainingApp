@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Exercise\Presentation\Controller\Api;
 
 use App\Exercise\Application\Command\CreateExerciseCommand;
-use App\Training\Application\Command\CreateWorkoutCommand;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api/v1/exercise', name: 'api_exercise_create', methods: ['POST'])]
 readonly class CreateExerciseApiController
 {
-    public function __construct(private MessageBusInterface $bus) {}
+    public function __construct(private MessageBusInterface $messageBus) {}
 
     public function __invoke(Request $request): JsonResponse
     {

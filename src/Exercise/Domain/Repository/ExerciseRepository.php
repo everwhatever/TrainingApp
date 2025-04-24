@@ -10,7 +10,7 @@ interface ExerciseRepository
 {
     public function save(Exercise $exercise): void;
 
-    public function findById(string $id): ?Exercise;
+    public function findOneBy(array $params): ?Exercise;
 
     public function findAll(): array;
 
