@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   php:
-    image: ghcr.io/everwhatever/TrainingApp:latest
+    image: ghcr.io/everwhatever/trainingapp:latest
     container_name: php-container
     environment:
       APP_ENV: prod
