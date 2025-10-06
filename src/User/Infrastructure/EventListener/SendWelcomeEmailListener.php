@@ -12,6 +12,7 @@ class SendWelcomeEmailListener
 {
     public function __invoke(UserCreatedEvent $event): void
     {
+
         return;
     }
 }
