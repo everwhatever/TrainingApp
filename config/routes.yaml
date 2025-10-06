@@ -18,6 +18,10 @@ api_login_check:
 training_controllers:
     resource: ../src/Training/Presentation/Controller/
     type: attribute
+
+exercise_controllers:
+    resource: ../src/Exercise/Presentation/Controller/
+    type: attribute
 #
 #training_plan_controllers:
 #    resource: ../src/trainingPlan/Presentation/Controller/
